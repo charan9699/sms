@@ -26,8 +26,19 @@ public class MainController {
     @PostMapping("/user")
     public Response<?> registerUser(@RequestBody UserDto userDto) {
         try {
-            userService.registerUser(userDto);
+            userService.register(userDto);
             return new Response<>(Constants.Status.SUCCESS, "User created successfully");
+        } catch (Exception e) {
+            return new Response<>(Constants.Status.FAILURE, e.getMessage());
+        }
+    }
+
+    //todo: modify to session based login
+    @PostMapping("/login")
+    public Response<?> loginUser(@RequestBody UserDto userDto) {
+        try {
+            userService.login(userDto);
+            return new Response<>();
         } catch (Exception e) {
             return new Response<>(Constants.Status.FAILURE, e.getMessage());
         }

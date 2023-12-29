@@ -4,7 +4,7 @@ import com.example.sms.dto.UserDto;
 import com.example.sms.entity.User;
 
 public class Converter {
-    public static User convertDtoToEntity(UserDto userDto) {
+    public static User convertUserDtoToEntity(UserDto userDto) {
         User user = new User();
         //convert username to lowercase??
         user.setUsername(userDto.getUsername());

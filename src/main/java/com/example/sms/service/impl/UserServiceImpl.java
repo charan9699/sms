@@ -16,13 +16,25 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public void registerUser(UserDto userDto) throws Exception {
+    public void register(UserDto userDto) throws Exception {
         Validator.validateUserDto(userDto);
         if (userExists(userDto.getUsername())) {
             throw new Exception("User already exists");
         }
-        User user = Converter.convertDtoToEntity(userDto);
+        User user = Converter.convertUserDtoToEntity(userDto);
         userRepository.save(user);
+    }
+
+    @Override
+    public void login(UserDto userDto) throws Exception {
+        Validator.validateUserDto(userDto);
+        User user = userRepository.findByUsername(userDto.getUsername());
+        if (null == user) {
+            throw new Exception("User does not exist");
+        }
+        if (!user.getPasscode().equals(userDto.getPasscode())) {
+            throw new Exception("Invalid passcode");
+        }
     }
 
     private boolean userExists(String username) {
