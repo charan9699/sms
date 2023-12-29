@@ -1,7 +1,10 @@
 package com.example.sms.controller;
 
+import com.example.sms.dto.MessageRequest;
+import com.example.sms.dto.MessageResponse;
 import com.example.sms.dto.Response;
 import com.example.sms.service.MessageService;
+import com.example.sms.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +16,25 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping("/user/{username}/message")
-    public Response<?> getMessages(@PathVariable("username") String username){
-        List<String> messages = messageService.fetchUnreadMessages(username);
-        if (null == messages) {
-            return new Response<>("No new messages");
+    public Response<?> fetchUnread(@PathVariable("username") String username){
+        try {
+            List<MessageResponse> messages = messageService.fetchUnreadMessages(username);
+            if (null == messages) {
+                return new Response<>("No new messages");
+            }
+            return new Response<>(messages);
+        } catch (Exception e) {
+            return new Response<>(Constants.Status.FAILURE, e.getMessage());
         }
-        return new Response<>(messages);
+    }
+
+    @PostMapping("/user/{username}/message")
+    public Response<?> sendMessage(@PathVariable("username") String username, @RequestBody MessageRequest messageRequest) {
+        try {
+            messageService.saveMessage(username, messageRequest);
+            return new Response<>();
+        } catch (Exception e) {
+            return new Response<>(Constants.Status.FAILURE, e.getMessage());
+        }
     }
 }

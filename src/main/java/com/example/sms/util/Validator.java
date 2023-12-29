@@ -9,4 +9,10 @@ public class Validator {
             throw new Exception("Username or passcode cannot be empty");
         }
     }
+
+    public static void validateUsername(String username) throws Exception {
+        if (StringUtils.isEmpty(username)) {
+            throw new Exception("Invalid username");
+        }
+    }
 }

@@ -1,7 +1,12 @@
 package com.example.sms.service;
 
+import com.example.sms.dto.MessageRequest;
+import com.example.sms.dto.MessageResponse;
+
 import java.util.List;
 
 public interface MessageService {
-    List<String> fetchUnreadMessages(String username);
+    List<MessageResponse> fetchUnreadMessages(String username) throws Exception;
+
+    void saveMessage(String username, MessageRequest message) throws Exception;
 }
