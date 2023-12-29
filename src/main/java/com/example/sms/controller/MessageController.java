@@ -20,13 +20,17 @@ public class MessageController {
                                    @RequestParam(name = "friend", required = false) String friend) {
         try {
             if (null != friend) {
+                List<MessageResponse> unreadMessagesFromFriend = messageService.fetchUnreadMessages(username, friend);
+                if (null != unreadMessagesFromFriend) {
+                    return new Response<>(Constants.Status.SUCCESS, "You have new message(s)", unreadMessagesFromFriend);
+                }
                 return fetchChatHistory(username, friend);
             }
-            List<MessageResponse> messages = messageService.fetchUnreadMessages(username);
-            if (null == messages) {
+            List<MessageResponse> allUnreadMessages = messageService.fetchUnreadMessages(username, null);
+            if (null == allUnreadMessages) {
                 return new Response<>("No new messages");
             }
-            return new Response<>(messages);
+            return new Response<>(Constants.Status.SUCCESS, "You have new message(s)", allUnreadMessages);
         } catch (Exception e) {
             return new Response<>(Constants.Status.FAILURE, e.getMessage());
         }
@@ -49,7 +53,7 @@ public class MessageController {
             if (null == messages) {
                 return new Response<>("No messages");
             }
-            return new Response<>(messages);
+            return new Response<>(Constants.Status.SUCCESS, "Chat History", messages);
         } catch (Exception e) {
             return new Response<>(Constants.Status.FAILURE, e.getMessage());
         }

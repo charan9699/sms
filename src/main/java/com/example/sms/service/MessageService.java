@@ -6,7 +6,7 @@ import com.example.sms.dto.MessageResponse;
 import java.util.List;
 
 public interface MessageService {
-    List<MessageResponse> fetchUnreadMessages(String username) throws Exception;
+    List<MessageResponse> fetchUnreadMessages(String username, String friend) throws Exception;
 
     void saveMessage(String username, MessageRequest message) throws Exception;
 

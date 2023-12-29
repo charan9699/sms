@@ -15,5 +15,4 @@ public class MessageResponse {
     private String text;
     private String from;
     private LocalDateTime timestamp;
-    //todo: add timestamp
 }

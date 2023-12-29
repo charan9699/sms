@@ -24,10 +24,15 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private UserRepository userRepository;
 
-    @Override
-    public List<MessageResponse> fetchUnreadMessages(String username) throws Exception {
+    public List<MessageResponse> fetchUnreadMessages(String username, String friend) throws Exception {
         Validator.validateUsername(username);
-        List<Message> messages =  messageRepository.findByReceiver_usernameAndStatusOrderByCreatedDesc(username, MessageStatus.RECEIVED);
+        //todo: check if the users exist??
+        List<Message> messages = null;
+        if (null == friend) {
+            messages = messageRepository.findByReceiver_usernameAndStatusOrderByCreatedDesc(username, MessageStatus.RECEIVED);
+        } else {
+            messages = messageRepository.findByReceiver_usernameAndSender_usernameAndStatusOrderByCreatedDesc(username, friend, MessageStatus.RECEIVED);
+        }
         if (CollectionUtils.isEmpty(messages)) {
             return null;
         }

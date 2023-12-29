@@ -15,6 +15,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     List<Message> findByReceiver_usernameAndStatusOrderByCreatedDesc(String username, MessageStatus status);
 
+    List<Message> findByReceiver_usernameAndSender_usernameAndStatusOrderByCreatedDesc(String receiver, String sender, MessageStatus status);
+
     @Transactional
     @Modifying
     @Query("update Message m set m.status = ?2 where m in ?1")
