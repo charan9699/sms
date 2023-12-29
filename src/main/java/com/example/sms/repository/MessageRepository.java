@@ -19,4 +19,9 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Modifying
     @Query("update Message m set m.status = ?2 where m in ?1")
     int updateStatus(List<Message> messages, MessageStatus read);
+
+    @Query("select m from Message m where " +
+            "(m.sender.username = ?1 and m.receiver.username = ?2) or " +
+            "(m.sender.username = ?2 and m.receiver.username = ?1) order by m.created asc")
+    List<Message> findAllMessagesBetweenUsers(String user1, String user2);
 }

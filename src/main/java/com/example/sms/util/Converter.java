@@ -39,6 +39,7 @@ public class Converter {
             MessageResponse messageResponse = new MessageResponse();
             messageResponse.setFrom(message.getSender().getUsername());
             messageResponse.setText(message.getText());
+            messageResponse.setTimestamp(message.getCreated());
             messageResponses.add(messageResponse);
         }
         return messageResponses;

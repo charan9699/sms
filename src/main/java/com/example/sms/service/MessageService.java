@@ -9,4 +9,6 @@ public interface MessageService {
     List<MessageResponse> fetchUnreadMessages(String username) throws Exception;
 
     void saveMessage(String username, MessageRequest message) throws Exception;
+
+    List<MessageResponse> fetchChatHistory(String username, String friend);
 }

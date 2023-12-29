@@ -47,4 +47,14 @@ public class MessageServiceImpl implements MessageService {
         Message message = Converter.convertToMessageEntity(messageRequest, sender, receiver);
         messageRepository.save(message);
     }
+
+    @Override
+    public List<MessageResponse> fetchChatHistory(String username, String friend) {
+        //todo: validate username and friend
+        List<Message> messages = messageRepository.findAllMessagesBetweenUsers(username, friend);
+        if (CollectionUtils.isEmpty(messages)) {
+            return null;
+        }
+        return Converter.convertToMessageResponse(messages);
+    }
 }

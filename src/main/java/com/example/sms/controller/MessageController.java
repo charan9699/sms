@@ -16,8 +16,12 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping("/user/{username}/message")
-    public Response<?> fetchUnread(@PathVariable("username") String username){
+    public Response<?> fetchUnread(@PathVariable("username") String username,
+                                   @RequestParam(name = "friend", required = false) String friend) {
         try {
+            if (null != friend) {
+                return fetchChatHistory(username, friend);
+            }
             List<MessageResponse> messages = messageService.fetchUnreadMessages(username);
             if (null == messages) {
                 return new Response<>("No new messages");
@@ -33,6 +37,19 @@ public class MessageController {
         try {
             messageService.saveMessage(username, messageRequest);
             return new Response<>();
+        } catch (Exception e) {
+            return new Response<>(Constants.Status.FAILURE, e.getMessage());
+        }
+    }
+
+    private Response<?> fetchChatHistory(@PathVariable("username") String username, @RequestParam("friend") String friend){
+        //todo: implement pagination and limit
+        try {
+            List<MessageResponse> messages = messageService.fetchChatHistory(username, friend);
+            if (null == messages) {
+                return new Response<>("No messages");
+            }
+            return new Response<>(messages);
         } catch (Exception e) {
             return new Response<>(Constants.Status.FAILURE, e.getMessage());
         }
