@@ -9,6 +9,8 @@ import com.example.sms.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -35,6 +37,12 @@ public class UserServiceImpl implements UserService {
         if (!user.getPasscode().equals(userDto.getPasscode())) {
             throw new Exception("Invalid passcode");
         }
+    }
+
+    @Override
+    public List<String> fetchUsers(String username) {
+        //validate username
+        return userRepository.findAllUsersExcept(username);
     }
 
     private boolean userExists(String username) {
