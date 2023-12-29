@@ -7,10 +7,8 @@ import com.example.sms.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-
 @RestController
-public class MainController {
+public class UserController {
 
     @Autowired
     private UserService userService;
