@@ -1,6 +1,10 @@
 package com.example.sms.config;
 
+import com.example.sms.dto.Response;
 import com.example.sms.filter.JwtRequestFilter;
+import com.example.sms.util.Constants;
+import com.example.sms.util.Utility;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -14,6 +18,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -46,14 +54,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/login", "/logout").permitAll()
-                    .antMatchers(HttpMethod.POST, "/user").permitAll()
                     .antMatchers(HttpMethod.GET, "/user").authenticated()
                     .antMatchers("/user/**/message").authenticated()
                     .anyRequest().permitAll()
                 .and()
                     .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                    .logout()
+                    .logoutUrl("/logout")
+                    .logoutSuccessHandler((req, res, auth) ->{
+                        Cookie cookie = new Cookie(Constants.AUTH_TOKEN, null);
+                        cookie.setMaxAge(0);
+                        res.addCookie(cookie);
+                        res.setContentType("application/json");
+                        res.setStatus(HttpServletResponse.SC_OK);
+                        new ObjectMapper().writeValue(res.getWriter(), new Response<>());
+                    })
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true);
 
         http.addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
     }

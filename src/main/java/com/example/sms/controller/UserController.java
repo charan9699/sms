@@ -55,9 +55,4 @@ public class UserController {
             return new Response<>(Constants.Status.FAILURE, e.getMessage());
         }
     }
-
-    @PostMapping("/logout")//todo:
-    public Response<?> logout() {
-        return null;
-    }
 }
