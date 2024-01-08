@@ -26,7 +26,6 @@ public class MessageServiceImpl implements MessageService {
 
     public List<MessageResponse> fetchUnreadMessages(String username, String friend) throws Exception {
         Validator.validateUsername(username);
-        //todo: check if the users exist??
         List<Message> messages = null;
         if (null == friend) {
             messages = messageRepository.findByReceiver_usernameAndStatusOrderByCreatedDesc(username, MessageStatus.RECEIVED);
@@ -42,7 +41,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void saveMessage(String username, MessageRequest messageRequest) throws Exception {
-        //todo: validate message request
+        Validator.validateMessageRequest(messageRequest);
         User sender = userRepository.findByUsername(username);
         User receiver = userRepository.findByUsername(messageRequest.getTo());
         if (null == sender || null == receiver) {
@@ -55,7 +54,6 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MessageResponse> fetchChatHistory(String username, String friend) {
-        //todo: validate username and friend
         List<Message> messages = messageRepository.findAllMessagesBetweenUsers(username, friend);
         if (CollectionUtils.isEmpty(messages)) {
             return null;

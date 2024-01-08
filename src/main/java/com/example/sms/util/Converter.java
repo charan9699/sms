@@ -6,8 +6,7 @@ import com.example.sms.dto.MessageResponse;
 import com.example.sms.dto.UserDto;
 import com.example.sms.entity.Message;
 import com.example.sms.entity.User;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,6 @@ public class Converter {
         User user = new User();
         //convert username to lowercase??
         user.setUsername(userDto.getUsername());
-        //convert passcode to md5??
         user.setPasscode(userDto.getPasscode());
         user.setEmail(userDto.getEmail());
         return user;
@@ -45,5 +43,9 @@ public class Converter {
             messageResponses.add(messageResponse);
         }
         return messageResponses;
+    }
+
+    public static UserDetails convertUserEntityToUserDetails(User user) {
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPasscode(), new ArrayList<>());
     }
 }

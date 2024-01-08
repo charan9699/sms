@@ -4,8 +4,12 @@ import com.example.sms.dto.Response;
 import com.example.sms.dto.UserDto;
 import com.example.sms.service.UserService;
 import com.example.sms.util.Constants;
+import com.example.sms.util.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class UserController {
@@ -28,23 +32,32 @@ public class UserController {
         }
     }
 
-    //todo: modify to session based login
     @PostMapping("/login")
-    public Response<?> loginUser(@RequestBody UserDto userDto) {
+    public Response<?> loginUser(@RequestBody UserDto userDto, HttpServletResponse response) {
         try {
-            userService.login(userDto);
-            return new Response<>();
+            String authToken = userService.login(userDto);
+            if (null != authToken) {
+                response.addCookie(Utility.getCookies(authToken));
+                return new Response<>(Constants.Status.SUCCESS, "Login successful");
+            }
+            return new Response<>(Constants.Status.FAILURE, "Login failed");
         } catch (Exception e) {
             return new Response<>(Constants.Status.FAILURE, e.getMessage());
         }
     }
 
-    @GetMapping("/user/{username}")//todo: modify to get username from session
-    public Response<?> getUsers(@PathVariable("username") String username){
+    @GetMapping("/user")
+    public Response<?> getUsers(HttpServletRequest request) {
         try {
+            String username = Utility.extractUsernameFromCookies(request.getCookies());
             return new Response<>(userService.fetchUsers(username));
         } catch (Exception e) {
             return new Response<>(Constants.Status.FAILURE, e.getMessage());
         }
+    }
+
+    @PostMapping("/logout")//todo:
+    public Response<?> logout() {
+        return null;
     }
 }
